@@ -5,7 +5,7 @@ function [C, sigma] = dataset3Params(X, y, Xval, yval)
 %   [C, sigma] = DATASET3PARAMS(X, y, Xval, yval) returns your choice of C and 
 %   sigma. You should complete this function to return the optimal C and 
 %   sigma based on a cross-validation set.
-%
+
 
 % You need to return the following variables correctly.
 C = 1;
@@ -23,12 +23,23 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+possible_C = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+possible_Sigma = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+smallest_Error = 1;
+m = size(possible_C,2);
 
-
-
-
-
-
+for i = 1:m
+    for j = 1:m
+        model = svmTrain(X, y, possible_C(i), @(x1, x2)gaussianKernel(x1, x2, possible_Sigma(j)));
+        predictions = svmPredict(model, Xval);
+        prediction_Error = mean(double(predictions ~= yval));
+        if prediction_Error < smallest_Error
+            C = possible_C(i);
+            sigma = possible_Sigma(j);
+            smallest_Error = prediction_Error;
+        end
+    end
+end
 % =========================================================================
 
 end
